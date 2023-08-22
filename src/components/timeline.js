@@ -9,9 +9,6 @@ import {
   auth,
   serverTimestamp,
 } from '../firebase/initializeFirebase';
-import logoProfile from '../img/logo-profile.png';
-import homeFill from '../img/home-fill.png';
-import personCircle from '../img/person-circle.svg';
 
 // Definir la función 'timeline'
 function timeline(navigateTo) {
@@ -25,7 +22,7 @@ function timeline(navigateTo) {
     <header class="header-timeline">
       <!-- Logo y botones -->
       <div class="container-logo-timeline">
-        <img src=${logoProfile} class="logo-timeline">
+        <img src="./img/logo-profile.png" class="logo-timeline">
       </div>
       <button class="fa-regular fa-heart" style="color: #6F60CF;"></button>
       <button class="menu-button">
@@ -87,7 +84,7 @@ function timeline(navigateTo) {
     <footer class="footer">
       <nav class="footer-nav">
         <button class="home-nav">
-          <img src=${homeFill} width="40"></img>
+          <img  src="./img/home-fill.png" width="40"></img>
         </button>
         <button class="search-nav">
           <svg data-name="Layer 1" viewBox="0 0 24 24" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
@@ -147,8 +144,8 @@ function timeline(navigateTo) {
         profileImage.src = `${srcPhoto}`;
         profileImage.innerHTML = `<img class="photo-URL" src="${user.photoURL}" />`;
       } else {
-        profileImage.src = `${personCircle}`;
-        profileImage.innerHTML = `<img class="photo-URL" src=${personCircle} />`;
+        profileImage.src = './img/person-circle.svg';
+        profileImage.innerHTML = '<img class="photo-URL" src="./img/person-circle.svg"/>';
       }
 
       // Mostrar el nombre de usuario
