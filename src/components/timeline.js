@@ -130,16 +130,13 @@ function timeline(navigateTo) {
 
   // Manejador para detectar el estado de autenticación
   onAuthStateChanged(auth, async (user) => {
-    console.log(`inside promise: ${user.displayName}`);
     if (user) {
       // Mostrar los posts del usuario autenticado
       const postsContainer = section.querySelector('.user-posts-container-timeline');
-      console.log(user.displayName);
       await displayAllUserPosts(user, postsContainer);
 
       // Mostrar la imagen de perfil del usuario
       const srcPhoto = user.photoURL;
-      console.log(srcPhoto);
       if (user.photoURL) {
         profileImage.src = `${srcPhoto}`;
         profileImage.innerHTML = `<img class="photo-URL" src="${user.photoURL}" />`;
@@ -151,7 +148,6 @@ function timeline(navigateTo) {
       // Mostrar el nombre de usuario
       const wholeUserName = user.displayName;
       const shortName = wholeUserName.slice(0, wholeUserName.indexOf(' '));
-      console.log(shortName);
       userName.textContent = shortName;
       userNameProfile.textContent = shortName;
     } else {
@@ -202,8 +198,6 @@ function timeline(navigateTo) {
         displayAllUserPosts(user, postsContainer);
         createPost.value = '';
       });
-    } else {
-      alert('Please write something');
     }
     post.style.display = 'none';
   });

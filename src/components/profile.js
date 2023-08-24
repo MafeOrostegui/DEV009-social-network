@@ -166,7 +166,7 @@ function profile(navigateTo) {
       // Mostrar información de usuario autenticado
       const postsContainer = section.querySelector('.user-posts-container');
       await displayUserPosts(user, postsContainer);
-      const srcPhoto = user.photoURL ||'./img/person-circle.svg';
+      const srcPhoto = user.photoURL || './img/person-circle.svg';
       profileImage.src = srcPhoto;
       profileImg.innerHTML = `<img class="photo-URL" src="${srcPhoto}" />`;
 

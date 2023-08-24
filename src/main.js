@@ -52,7 +52,6 @@ function navigateTo(hash) {
 }
 
 window.onpopstate = () => {
-  console.log('Hubo un cambio');
   navigateTo(window.location.pathname);
 };
 
