@@ -4,7 +4,6 @@ import login from '../src/components/login';
 jest.mock('../src/lib/index');
 
 jest.mock('../src/firebase/initializeFirebase', () => ({
-  signInWithRedirect: jest.fn(),
   provider: jest.fn(),
   auth: jest.fn(),
 }));

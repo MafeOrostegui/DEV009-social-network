@@ -18,6 +18,19 @@ import {
   signInWithPopup,
 } from '../firebase/initializeFirebase';
 
+// Función para crear una cuenta con correo electrónico
+export const createAccountWithEmail = async (name, email, password) => {
+  const result = await createUserWithEmailAndPassword(auth, email, password);
+  await sendEmailVerification(result.user);
+  await updateProfile(result.user, { displayName: name });
+  signOut(auth);
+};
+
+// Función para autenticar con Google
+export const authWithGoogle = async () => {
+  await signInWithPopup(auth, provider);
+};
+
 // Función para iniciar sesión de usuario
 export const loginUser = (email, password) => new Promise((resolve, reject) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -31,19 +44,6 @@ export const loginUser = (email, password) => new Promise((resolve, reject) => {
     })
     .catch((err) => reject(err));
 });
-
-// Función para crear una cuenta con correo electrónico
-export const createAccountWithEmail = async (name, email, password) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password);
-  await updateProfile(result.user, { displayName: name });
-  await sendEmailVerification(result.user);
-  signOut(auth);
-};
-
-// Función para autenticar con Google
-export const authWithGoogle = async () => {
-  await signInWithPopup(auth, provider);
-};
 
 // Función para cerrar sesión de usuario
 export const signOutUser = async () => {
@@ -103,40 +103,26 @@ export const displayUserPosts = async (user, containerElement) => {
 
     likeButton.addEventListener('click', async () => {
       const userId = user.uid;
-      const arrayLinks = post.likesArr;
-      console.log(arrayLinks);
 
       const tempLikesArray = post.likesArr || [];
-      console.log(tempLikesArray);
       userGaveLike = tempLikesArray.includes(userId);
-      console.log(userGaveLike);
 
-      try {
-        if (userGaveLike) {
-          const indexUserLikesArray = tempLikesArray.indexOf(userId);
-          tempLikesArray.splice(indexUserLikesArray, 1);
-          console.log(tempLikesArray);
-          const likesArrayLength = tempLikesArray.length;
+      if (userGaveLike) {
+        const indexUserLikesArray = tempLikesArray.indexOf(userId);
+        tempLikesArray.splice(indexUserLikesArray, 1);
+        const likesArrayLength = tempLikesArray.length;
 
-          await updateDoc(doc.ref, { likesArr: tempLikesArray });
-          await updateDoc(doc.ref, { likesSum: likesArrayLength });
-          like.src = './img/heart-no-fill.svg';
-          likeCounter.textContent = `${likesArrayLength}  likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-          console.log(post.likesSum);
-        } else {
-          tempLikesArray.push(userId);
-          const likesArrayLength = tempLikesArray.length;
-          await updateDoc(doc.ref, { likesArr: tempLikesArray });
-          await updateDoc(doc.ref, { likesSum: likesArrayLength });
-          like.src = './img/heart-fill.svg';
-          likeCounter.textContent = `${likesArrayLength}  Likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-        }
-      } catch (error) {
-        console.error('Error updating the post:', error);
+        await updateDoc(doc.ref, { likesArr: tempLikesArray });
+        await updateDoc(doc.ref, { likesSum: likesArrayLength });
+        like.src = './img/heart-no-fill.svg';
+        likeCounter.textContent = `${likesArrayLength}  likes`;
+      } else {
+        tempLikesArray.push(userId);
+        const likesArrayLength = tempLikesArray.length;
+        await updateDoc(doc.ref, { likesArr: tempLikesArray });
+        await updateDoc(doc.ref, { likesSum: likesArrayLength });
+        like.src = './img/heart-fill.svg';
+        likeCounter.textContent = `${likesArrayLength}  Likes`;
       }
     });
     const editButton = postElement.querySelector('.edit-post');
@@ -170,15 +156,11 @@ export const displayUserPosts = async (user, containerElement) => {
           const saveButton = editForm.querySelector('.button-publish-post');
           saveButton.addEventListener('click', async () => {
             const newContent = editForm.querySelector('.edit-content').value;
-            try {
-              await updateDoc(doc.ref, { content: newContent });
-              post.content = newContent;
-              const contentElement = postElement.querySelector('.post-content');
-              contentElement.textContent = newContent;
-              editForm.remove();
-            } catch (error) {
-              console.error('Error updating the post:', error);
-            }
+            await updateDoc(doc.ref, { content: newContent });
+            post.content = newContent;
+            const contentElement = postElement.querySelector('.post-content');
+            contentElement.textContent = newContent;
+            editForm.remove();
           });
 
           const exitButton = editForm.querySelector('.exit-create-post');
@@ -204,8 +186,6 @@ export const displayUserPosts = async (user, containerElement) => {
             try {
               await deletePost(doc.ref);
               postElement.remove();
-            } catch (error) {
-              console.error('Error deleting the post:', error);
             } finally {
               customConfirmModal.style.display = 'none';
             }
@@ -230,9 +210,7 @@ export const displayAllUserPosts = async (user, containerElement) => {
 
   postsSnapshot.forEach((doc) => {
     const post = doc.data();
-    console.log(`likes array in displayAllUserPosts: ${post.likesArr}`);
     let userGaveLike = post.likesArr.includes(user.uid);
-    console.log(userGaveLike);
     const postElement = document.createElement('div');
     postElement.classList.add('user-post');
 
@@ -260,40 +238,25 @@ export const displayAllUserPosts = async (user, containerElement) => {
 
     likeButton.addEventListener('click', async () => {
       const userId = user.uid;
-      const arrayLinks = post.likesArr;
-      console.log(arrayLinks);
-
       const tempLikesArray = post.likesArr || [];
-      console.log(tempLikesArray);
       userGaveLike = tempLikesArray.includes(userId);
-      console.log(userGaveLike);
 
-      try {
-        if (userGaveLike) {
-          const indexUserLikesArray = tempLikesArray.indexOf(userId);
-          tempLikesArray.splice(indexUserLikesArray, 1);
-          console.log(tempLikesArray);
-          const likesArrayLength = tempLikesArray.length;
+      if (userGaveLike) {
+        const indexUserLikesArray = tempLikesArray.indexOf(userId);
+        tempLikesArray.splice(indexUserLikesArray, 1);
+        const likesArrayLength = tempLikesArray.length;
 
-          await updateDoc(doc.ref, { likesArr: tempLikesArray });
-          await updateDoc(doc.ref, { likesSum: likesArrayLength });
-          like.src = './img/heart-no-fill.svg';
-          likeCounter.textContent = `${likesArrayLength}  likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-          console.log(post.likesSum);
-        } else {
-          tempLikesArray.push(userId);
-          const likesArrayLength = tempLikesArray.length;
-          await updateDoc(doc.ref, { likesArr: tempLikesArray });
-          await updateDoc(doc.ref, { likesSum: likesArrayLength });
-          like.src = './img/heart-fill.svg';
-          likeCounter.textContent = `${likesArrayLength}  Likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-        }
-      } catch (error) {
-        console.error('Error updating the post:', error);
+        await updateDoc(doc.ref, { likesArr: tempLikesArray });
+        await updateDoc(doc.ref, { likesSum: likesArrayLength });
+        like.src = './img/heart-no-fill.svg';
+        likeCounter.textContent = `${likesArrayLength}  likes`;
+      } else {
+        tempLikesArray.push(userId);
+        const likesArrayLength = tempLikesArray.length;
+        await updateDoc(doc.ref, { likesArr: tempLikesArray });
+        await updateDoc(doc.ref, { likesSum: likesArrayLength });
+        like.src = './img/heart-fill.svg';
+        likeCounter.textContent = `${likesArrayLength}  Likes`;
       }
     });
 
@@ -328,16 +291,11 @@ export const displayAllUserPosts = async (user, containerElement) => {
           const saveButton = editForm.querySelector('.button-publish-post');
           saveButton.addEventListener('click', async () => {
             const newContent = editForm.querySelector('.edit-content').value;
-            try {
-              await updateDoc(doc.ref, { content: newContent });
-              console.log(`doc.ref in saveButton: ${doc.ref}`);
-              post.content = newContent;
-              const contentElement = postElement.querySelector('.post-content');
-              contentElement.textContent = newContent;
-              editForm.remove();
-            } catch (error) {
-              console.error('Error updating the post:', error);
-            }
+            await updateDoc(doc.ref, { content: newContent });
+            post.content = newContent;
+            const contentElement = postElement.querySelector('.post-content');
+            contentElement.textContent = newContent;
+            editForm.remove();
           });
 
           const exitButton = editForm.querySelector('.exit-create-post');
@@ -364,8 +322,6 @@ export const displayAllUserPosts = async (user, containerElement) => {
             try {
               await deletePost(doc.ref);
               postElement.remove();
-            } catch (error) {
-              console.error('Error deleting the post:', error);
             } finally {
               customConfirmModal.style.display = 'none';
             }
