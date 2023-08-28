@@ -18,6 +18,19 @@ import {
   signInWithPopup,
 } from '../firebase/initializeFirebase';
 
+// Función para crear una cuenta con correo electrónico
+export const createAccountWithEmail = async (name, email, password) => {
+  const result = await createUserWithEmailAndPassword(auth, email, password);
+  await sendEmailVerification(result.user);
+  await updateProfile(result.user, { displayName: name });
+  signOut(auth);
+};
+
+// Función para autenticar con Google
+export const authWithGoogle = async () => {
+  await signInWithPopup(auth, provider);
+};
+
 // Función para iniciar sesión de usuario
 export const loginUser = (email, password) => new Promise((resolve, reject) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -31,19 +44,6 @@ export const loginUser = (email, password) => new Promise((resolve, reject) => {
     })
     .catch((err) => reject(err));
 });
-
-// Función para crear una cuenta con correo electrónico
-export const createAccountWithEmail = async (name, email, password) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password);
-  await updateProfile(result.user, { displayName: name });
-  await sendEmailVerification(result.user);
-  signOut(auth);
-};
-
-// Función para autenticar con Google
-export const authWithGoogle = async () => {
-  await signInWithPopup(auth, provider);
-};
 
 // Función para cerrar sesión de usuario
 export const signOutUser = async () => {
